@@ -1,2 +1,2 @@
 # maze-generator
-A simple maze generator algorithm i programmed
+A simple maze generation algorithm i programmed

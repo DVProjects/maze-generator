@@ -9,10 +9,28 @@
  * if the 3rd parameter isn't given generate random seed.
  */
 
+enum side {
+	BOTTOM	= 0b0001,
+	RIGHT	= 0b0010,
+	TOP	= 0b0100,
+	LEFT	= 0b1000,
+};
+
 int rows, cols;
 int **maze;
 
+void mazeInit(void){
+	maze = (int**)malloc(sizeof(int*)*rows);
+	for (int i = 0; i< rows;i++){
+		maze[i] = (int*)malloc(sizeof(int)*cols);
+		for (int j = 0;j<cols;j++){
+			maze[i][j] = BOTTOM + RIGHT + TOP + LEFT;
+		}
+	}
+}
+
 int main(int argc, char *argv[]){
+	fprintf(stderr, "#Run at %ld\t####\n",time(0));
 	int seed;
 	rows = atoi(argv[1]);
 	cols = atoi(argv[2]);
@@ -20,5 +38,7 @@ int main(int argc, char *argv[]){
 	else seed = time(0);
 	srand(seed);
 	fprintf(stderr, "Seed: %d\n",seed);
+	free(maze);
+	fprintf(stderr, "#Ended at %ld\t####\n",time(0));
 	return 0;
 }

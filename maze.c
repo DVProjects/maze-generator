@@ -20,13 +20,20 @@ int rows, cols;
 int **maze;
 
 void mazeInit(void){
-	maze = (int**)malloc(sizeof(int*)*rows);
+  maze = (int**)malloc(sizeof(int*)*rows);
 	for (int i = 0; i< rows;i++){
 		maze[i] = (int*)malloc(sizeof(int)*cols);
 		for (int j = 0;j<cols;j++){
 			maze[i][j] = BOTTOM + RIGHT + TOP + LEFT;
 		}
 	}
+}
+
+void mazeFree(void){
+	for (int i = 0; i< rows;i++){
+    free(maze[i]);
+  }
+  free(maze);
 }
 
 int main(int argc, char *argv[]){
@@ -38,7 +45,8 @@ int main(int argc, char *argv[]){
 	else seed = time(0);
 	srand(seed);
 	fprintf(stderr, "Seed: %d\n",seed);
-	free(maze);
+  mazeInit();
+	mazeFree();
 	fprintf(stderr, "#Ended at %ld\t####\n",time(0));
 	return 0;
 }

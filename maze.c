@@ -7,7 +7,11 @@
  * the 1st one is the number of rows, the 2nd one is the number of columns.
  * If present, the 3rd parameter must be used as the seed for the maze generation,
  * if the 3rd parameter isn't given generate random seed.
+ * The top left corner is the start and the bottom right corner is the end,
+ * every cell of the maze must be connected.
  */
+
+#define VISITED 0b10000
 
 enum side {
 	BOTTOM	= 0b0001,
@@ -35,6 +39,36 @@ void mazeInit(void){
 			maze[i][j] = BOTTOM + RIGHT + TOP + LEFT;
 		}
 	}
+}
+
+int mazeCellDetect(int x, int y){
+  int found_cells = 0;
+	if (y <rows-1 && ~maze[y+1][x] & VISITED)found_cells += BOTTOM;
+	if (x <cols-1 && ~maze[y][x+1] & VISITED)found_cells += RIGHT;
+	if (y > 0     && ~maze[y-1][x] & VISITED)found_cells += TOP;
+	if (x > 0     && ~maze[y][x-1] & VISITED)found_cells += LEFT;
+  return found_cells;
+}
+
+void mazeGen(int x, int y){
+  if (maze[y][x] & VISITED)return;
+  maze[y][x] += VISITED; // mark as visited 
+  enum side next;
+  int x_mov = 0, y_mov = 0; // maze movement variables
+  int found_cells = mazeCellDetect(x, y); // remaining cells map
+  while (found_cells) {
+    do {
+      next = 1 << (rand() % 5); // choose random wall to remove
+    } while (~found_cells & next);
+    if (next == BOTTOM) y_mov = +1;
+    if (next == RIGHT)  x_mov = +1;
+    if (next == TOP)    y_mov = -1;
+    if (next == LEFT)   x_mov = -1;
+    maze[y][x] -= next; // clear choosen wall
+    maze[y+y_mov][x+x_mov] -= next < 2 ? next << 2 : next >> 2;
+    mazeGen(x+x_mov, y+y_mov); // call function for next cell
+    found_cells = mazeCellDetect(x, y); // remove traversed cells
+  }
 }
 
 void mazePrint(){
@@ -76,6 +110,7 @@ int main(int argc, char *argv[]){
 	srand(seed);
 	fprintf(stderr, "Seed: %d\n",seed);
   mazeInit();
+  mazeGen(0,0);
   mazePrint();
 	mazeFree();
 	fprintf(stderr, "#Ended at %ld\t####\n",time(0));

@@ -52,6 +52,7 @@ int mazeCellDetect(int x, int y){
 
 void mazeGen(int x, int y){
   if (maze[y][x] & VISITED)return;
+  fprintf(stderr, "Entered cell at x: %d; y: %d\n" ,x ,y);
   maze[y][x] += VISITED; // mark as visited 
   enum side next;
   int x_mov = 0, y_mov = 0; // maze movement variables
@@ -65,10 +66,12 @@ void mazeGen(int x, int y){
     if (next == TOP)    y_mov = -1;
     if (next == LEFT)   x_mov = -1;
     maze[y][x] -= next; // clear choosen wall
-    maze[y+y_mov][x+x_mov] -= next < 2 ? next << 2 : next >> 2;
+    maze[y+y_mov][x+x_mov] -= next <= 2 ? next << 2 : next >> 2;
     mazeGen(x+x_mov, y+y_mov); // call function for next cell
+    fprintf(stderr, "x: %d; y: %d\n" ,x ,y);
     found_cells = mazeCellDetect(x, y); // remove traversed cells
   }
+  fprintf(stderr, "Backtracking to ");
 }
 
 void mazePrint(){

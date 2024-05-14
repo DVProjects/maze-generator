@@ -55,9 +55,11 @@ void mazeGen(int x, int y){
   fprintf(stderr, "Entered cell at x: %d; y: %d\n" ,x ,y);
   maze[y][x] += VISITED; // mark as visited 
   enum side next;
-  int x_mov = 0, y_mov = 0; // maze movement variables
+  int x_mov, y_mov; // maze movement variables
   int found_cells = mazeCellDetect(x, y); // remaining cells map
   while (found_cells) {
+    x_mov = 0; // reset movement values
+    y_mov = 0;
     do {
       next = 1 << (rand() % 5); // choose random wall to remove
     } while (~found_cells & next);
